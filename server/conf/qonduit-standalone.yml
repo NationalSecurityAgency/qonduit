@@ -1,0 +1,45 @@
+qonduit:
+  accumulo:
+    instance-name: Standalone
+    zookeepers: 127.0.0.1:9804
+    username: root
+    password: secret
+    write:
+      latency: 5s
+      threads: 3
+      bufferSize: 52428800
+    scan:
+      threads: 4
+  security:
+    session-max-age: 86400
+    allow-anonymous-access: true
+    ssl:
+      certificate-file:
+      key-file:
+      key-password: qonduit
+      use-generated-keypair: true
+      trust-store-file:
+      use-openssl: false
+  server:
+    ip: 0.0.0.0
+  http:
+    ip: 0.0.0.0
+    port: 54322
+    host: localhost
+    redirect-path: /secure-me
+    strict-transport-max-age: 608400
+    cors:
+      allow-any-origin: true
+      allow-null-origin: false
+      allow-credentials: true
+      allowed-origins:
+      allowed-methods: DELETE,GET,HEAD,OPTIONS,PUT,POST
+      allowed-header: content-type
+  websocket:
+    ip: 0.0.0.0
+    port: 54323
+    timeout: 60
+  visibility-cache:
+    expiration-minutes: 60
+    initial-capacity: 2000
+    max-capacity: 10000

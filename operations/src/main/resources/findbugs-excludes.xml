@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <Match>
+    <Class name="qonduit.operations.scanner.Key" />
+    <Bug pattern="EI_EXPOSE_REP" />  
+  </Match>
+  <Match>
+    <Class name="qonduit.operations.scanner.Value" />
+    <Bug pattern="EI_EXPOSE_REP" />  
+  </Match>
+  <Match>
+    <Class name="qonduit.operations.scanner.ScanRequest$Column" />
+    <Bug pattern="EI_EXPOSE_REP" />  
+  </Match>
+</FindBugsFilter>

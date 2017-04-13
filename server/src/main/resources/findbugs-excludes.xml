@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <Match>
+    <Class name="qonduit.Server" />
+    <Method name="shutdown" />
+    <Bug pattern="UC_USELESS_OBJECT" />
+  </Match>
+  <Match>
+    <Class name="qonduit.operation.BatchingOperation" />
+    <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />  
+  </Match>
+</FindBugsFilter>
