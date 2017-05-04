@@ -2,6 +2,7 @@ package qonduit;
 
 import qonduit.Configuration;
 import qonduit.Server;
+import qonduit.netty.http.NonSslRedirectHandler;
 import qonduit.test.TestCaptureRequestHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
@@ -25,7 +26,7 @@ public class TestServer extends Server {
 
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast("ssl", sslCtx.newHandler(ch.alloc()));
+                ch.pipeline().addLast("ssl", new NonSslRedirectHandler(config, sslCtx));
                 ch.pipeline().addLast("decompressor", new HttpContentDecompressor());
                 ch.pipeline().addLast("decoder", new HttpRequestDecoder());
                 ch.pipeline().addLast("aggregator", new HttpObjectAggregator(8192));
