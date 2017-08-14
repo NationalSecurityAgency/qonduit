@@ -10,6 +10,7 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.handler.ssl.SslCompletionEvent;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.ScheduledFuture;
@@ -160,6 +161,11 @@ public class WebSocketRequestDecoder extends SimpleChannelInboundHandler<WebSock
                 // We have not read any data from client in a while, let's close
                 // the subscriptions for this context.
                 LOG.info("Client {} is idle", ctx.channel());
+            }
+        } else if (evt instanceof SslCompletionEvent) {
+            SslCompletionEvent ssl = (SslCompletionEvent) evt;
+            if (!ssl.isSuccess()) {
+                LOG.error("SSL error: {}", ssl.getClass().getSimpleName(), ssl.cause());
             }
         } else {
             LOG.warn("Received unhandled user event {}", evt);
