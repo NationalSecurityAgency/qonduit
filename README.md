@@ -1,4 +1,8 @@
+# Qonduit
+
 [![Apache License][li]][ll]
+
+## Description
 
 Qonduit is a secure web socket proxy for [Apache Accumulo](http://accumulo.apache.org/).
 
@@ -7,6 +11,16 @@ Qonduit is a Java server process that uses [Netty](http://netty.io/) for a secur
 1. Qonduit uses secure web sockets to provide an asychronous and secure transport between the client and the Qonduit server.
 2. Qonduit can optionally authenticate users using client supplied credentials and a Spring Security configuration on the Qonduit server.
 3. Qonduit does not provide a strict proxy for the Accumulo client API, it is designed to be extended with pluggable server side logic and custom request and response types.
+
+## Development
+
+Qonduit requires [Apache Maven](http://maven.apache.org) to build.  The
+[os-maven-plugin](https://github.com/trustin/os-maven-plugin) is used for
+building platform specific packages.   
+
+If you are using and IDE, you will benefit from reading [about how to
+configure](https://github.com/trustin/os-maven-plugin#issues-with-eclipse-m2e-or-other-ides)
+your IDE.
 
 [li]: http://img.shields.io/badge/license-ASL-blue.svg
 [ll]: https://www.apache.org/licenses/LICENSE-2.0
