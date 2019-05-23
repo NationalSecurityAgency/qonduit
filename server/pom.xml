@@ -11,7 +11,7 @@
         <dependency>
             <groupId>qonduit</groupId>
             <artifactId>client</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
             <exclusions>
             	<exclusion>
             		<groupId>*</groupId>

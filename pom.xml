@@ -45,7 +45,7 @@
         <version.guava>21.0</version.guava>
         <version.hadoop>2.7.3</version.hadoop>
         <version.httpcomponents>4.5.3</version.httpcomponents>
-        <version.jackson>2.8.11</version.jackson>
+        <version.jackson>2.9.9</version.jackson>
         <version.javassist>3.21.0-GA</version.javassist>
         <version.jcip-annotations>1.0</version.jcip-annotations>
         <version.jsoup>1.9.2</version.jsoup>
@@ -88,7 +88,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${version.jackson}.2</version>
+                <version>${version.jackson}</version>
             </dependency>
 	        <dependency>
 	            <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -119,7 +119,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>LATEST</version>
+                <version>1.9.3</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -362,6 +362,11 @@
 	                    <argLine>${sureFireArgLine} -Djava.library.path=${project.build.directory}/native/META-INF/native/libnetty-tcnative.so -Dzookeeper.sasl.client=false</argLine>
 	                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
 	                </configuration>
+	            </plugin>
+	            <plugin>
+	                <groupId>org.apache.maven.plugins</groupId>
+	                <artifactId>maven-failsafe-plugin</artifactId>
+	                <version>${version.maven-surefire}</version>
 	            </plugin>
 	            <plugin>
 	                <groupId>org.codehaus.mojo</groupId>
