@@ -24,10 +24,10 @@ public interface HttpHandler {
 
     default void sendHttpError(ChannelHandlerContext ctx, QonduitException e) throws JsonProcessingException {
         LOG.error("Error in pipeline, response code: {}, message: {}", e.getCode(), e.getMessage());
-        byte[] buf = JsonUtil.getObjectMapper().writeValueAsBytes(
-                "ResponseCode: " + e.getCode() + " Message: " + e.getMessage());
-        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(e
-                .getCode()), Unpooled.copiedBuffer(buf));
+        byte[] buf = JsonUtil.getObjectMapper()
+                .writeValueAsBytes("ResponseCode: " + e.getCode() + " Message: " + e.getMessage());
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
+                HttpResponseStatus.valueOf(e.getCode()), Unpooled.copiedBuffer(buf));
         response.headers().set(Names.CONTENT_TYPE, Constants.JSON_TYPE);
         response.headers().set(Names.CONTENT_LENGTH, response.content().readableBytes());
         e.getResponseHeaders().entrySet().forEach(entry -> response.headers().set(entry.getKey(), entry.getValue()));

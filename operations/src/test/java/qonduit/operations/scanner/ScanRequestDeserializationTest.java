@@ -22,7 +22,8 @@ public class ScanRequestDeserializationTest {
         r.setStart(new Key("a".getBytes(UTF_8), "b".getBytes(UTF_8), "c".getBytes(UTF_8), "d".getBytes(UTF_8), now,
                 false));
         r.setStartKeyInclusive(true);
-        r.setStop(new Key("e".getBytes(UTF_8), "f".getBytes(UTF_8), "g".getBytes(UTF_8), "h".getBytes(UTF_8), now, true));
+        r.setStop(
+                new Key("e".getBytes(UTF_8), "f".getBytes(UTF_8), "g".getBytes(UTF_8), "h".getBytes(UTF_8), now, true));
         r.setStopKeyInclusive(true);
         ScanRequest request = new ScanRequest();
         request.setContext("foo");
@@ -77,8 +78,8 @@ public class ScanRequestDeserializationTest {
         Assert.assertEquals(2, cfs.size());
         for (byte[] c : cfs) {
             /**
-             * Had to check values as Strings here. The byte encoding of the
-             * deserialized byte array did not match "x".getBytes()
+             * Had to check values as Strings here. The byte encoding of the deserialized
+             * byte array did not match "x".getBytes()
              */
             if (!("x".equals(new String(c)) || "y".equals(new String(c)))) {
                 Assert.fail("Missing value");

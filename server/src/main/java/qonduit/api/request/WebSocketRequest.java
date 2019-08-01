@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public interface WebSocketRequest extends Request {
 
     /*
-     * WebSocket requests will contain a property named 'operation' as well as
-     * this method for mapping request messages to request handlers.
+     * WebSocket requests will contain a property named 'operation' as well as this
+     * method for mapping request messages to request handlers.
      */
     public String getOperation();
 

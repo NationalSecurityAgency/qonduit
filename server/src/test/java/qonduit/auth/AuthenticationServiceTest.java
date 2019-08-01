@@ -27,8 +27,8 @@ public class AuthenticationServiceTest {
         Authentication auth = AuthenticationService.getAuthenticationManager().authenticate(token);
         Collection<? extends GrantedAuthority> authorizations = auth.getAuthorities();
         authorizations.forEach(a -> {
-            Assert.assertTrue(a.getAuthority().equals("A") || a.getAuthority().equals("B")
-                    || a.getAuthority().equals("C"));
+            Assert.assertTrue(
+                    a.getAuthority().equals("A") || a.getAuthority().equals("B") || a.getAuthority().equals("C"));
         });
     }
 
@@ -39,8 +39,8 @@ public class AuthenticationServiceTest {
         Authentication auth = AuthenticationService.getAuthenticationManager().authenticate(token);
         Collection<? extends GrantedAuthority> authorizations = auth.getAuthorities();
         authorizations.forEach(a -> {
-            Assert.assertTrue(a.getAuthority().equals("D") || a.getAuthority().equals("E")
-                    || a.getAuthority().equals("F"));
+            Assert.assertTrue(
+                    a.getAuthority().equals("D") || a.getAuthority().equals("E") || a.getAuthority().equals("F"));
         });
     }
 
@@ -51,8 +51,8 @@ public class AuthenticationServiceTest {
         Authentication auth = AuthenticationService.getAuthenticationManager().authenticate(token);
         Collection<? extends GrantedAuthority> authorizations = auth.getAuthorities();
         authorizations.forEach(a -> {
-            Assert.assertTrue(a.getAuthority().equals("D") || a.getAuthority().equals("E")
-                    || a.getAuthority().equals("F"));
+            Assert.assertTrue(
+                    a.getAuthority().equals("D") || a.getAuthority().equals("E") || a.getAuthority().equals("F"));
         });
     }
 

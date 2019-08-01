@@ -8,11 +8,11 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <dependencies>
-    	<dependency>
+        <dependency>
             <groupId>qonduit</groupId>
             <artifactId>server</artifactId>
             <version>${project.version}</version>
-    	</dependency>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
@@ -43,8 +43,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -55,7 +55,7 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>net.revelc.code</groupId>
+                <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
             </plugin>
             <plugin>
@@ -67,9 +67,9 @@
     <reporting>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${version.findbugs-maven}</version>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${version.spotbugs-maven}</version>
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Medium</threshold>

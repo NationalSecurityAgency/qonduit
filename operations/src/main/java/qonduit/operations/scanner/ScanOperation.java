@@ -51,8 +51,8 @@ public class ScanOperation extends BatchingOperation<KVPair> {
                 this.request.getColumnFamilies().forEach(cf -> s.fetchColumnFamily(new Text(cf)));
             }
             if (null != this.request.getColumns()) {
-                this.request.getColumns().forEach(
-                        c -> s.fetchColumn(new Text(c.getFamily()), new Text(c.getQualifier())));
+                this.request.getColumns()
+                        .forEach(c -> s.fetchColumn(new Text(c.getFamily()), new Text(c.getQualifier())));
             }
             if (this.closed) {
                 return;

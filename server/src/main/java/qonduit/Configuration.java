@@ -224,8 +224,8 @@ public class Configuration {
         private boolean useGeneratedKeypair = false;
         private boolean useOpenssl = true;
         private List<String> useCiphers = Lists.newArrayList("TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
-                "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA", "TLS_RSA_WITH_AES_128_GCM_SHA256",
-                "TLS_RSA_WITH_AES_128_CBC_SHA", "SSL_RSA_WITH_3DES_EDE_CBC_SHA");
+                "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA", "TLS_RSA_WITH_AES_128_GCM_SHA256", "TLS_RSA_WITH_AES_128_CBC_SHA",
+                "SSL_RSA_WITH_3DES_EDE_CBC_SHA");
 
         public String getCertificateFile() {
             return certificateFile;
@@ -308,11 +308,8 @@ public class Configuration {
         }
 
         /**
-         * Time to wait (in seconds) for connections to finish and to make sure
-         * no new connections happen before shutting down Netty event loop
-         * groups.
-         *
-         * @return
+         * Time to wait (in seconds) for connections to finish and to make sure no new
+         * connections happen before shutting down Netty event loop groups.
          */
         public int getShutdownQuietPeriod() {
             return this.shutdownQuietPeriod;

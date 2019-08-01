@@ -148,7 +148,8 @@ public class WebSocketClientIT extends OneWaySSLBase {
 
     @Test
     public void testClientAnonymousAccess() throws Exception {
-        WebSocketClient client = new WebSocketClient(sslCtx, "localhost", 54322, 54323, false, null, null, false, 65536);
+        WebSocketClient client = new WebSocketClient(sslCtx, "localhost", 54322, 54323, false, null, null, false,
+                65536);
         doVersion(client);
     }
 

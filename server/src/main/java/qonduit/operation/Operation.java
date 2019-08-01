@@ -11,10 +11,6 @@ public interface Operation extends Runnable {
 
     /**
      * Initialize the operation so that it's ready to run
-     * 
-     * @param context
-     * @param connector
-     * @param auths
      */
     public void init(ChannelHandlerContext context, Connector connector, Authorizations auths, WebSocketRequest r);
 

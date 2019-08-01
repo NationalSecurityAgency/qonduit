@@ -222,8 +222,8 @@ public class WebSocketIT extends OneWaySSLBase {
             String uuid = UUID.randomUUID().toString();
             VersionRequest request = new VersionRequest();
             request.setRequestId(uuid);
-            ch.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(JsonSerializer.getObjectMapper()
-                    .writeValueAsBytes(request))));
+            ch.writeAndFlush(new BinaryWebSocketFrame(
+                    Unpooled.wrappedBuffer(JsonSerializer.getObjectMapper().writeValueAsBytes(request))));
             // Confirm receipt of all data sent to this point
             List<byte[]> response = handler.getResponses();
             while (response.size() == 0 && handler.isConnected()) {
@@ -232,8 +232,8 @@ public class WebSocketIT extends OneWaySSLBase {
                 response = handler.getResponses();
             }
             assertEquals(1, response.size());
-            VersionResponse version = JsonSerializer.getObjectMapper()
-                    .readValue(response.get(0), VersionResponse.class);
+            VersionResponse version = JsonSerializer.getObjectMapper().readValue(response.get(0),
+                    VersionResponse.class);
             assertEquals(VersionResponse.VERSION, version.getVersion());
             assertEquals(uuid, version.getRequestId());
         } finally {

@@ -69,9 +69,8 @@ public class WebSocketClient implements AutoCloseable {
         Preconditions.checkNotNull(httpsPort, "%s must be supplied", "HTTPS port");
         Preconditions.checkNotNull(wssPort, "%s must be supplied", "WSS port");
 
-        if (doLogin
-                && ((StringUtils.isEmpty(username) && !StringUtils.isEmpty(password) || (!StringUtils.isEmpty(username) && StringUtils
-                        .isEmpty(password))))) {
+        if (doLogin && ((StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)
+                || (!StringUtils.isEmpty(username) && StringUtils.isEmpty(password))))) {
             throw new IllegalArgumentException("Both username and password must be empty or non-empty");
         }
 
@@ -115,8 +114,8 @@ public class WebSocketClient implements AutoCloseable {
                 try {
                     response = client.execute(request);
                     if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                        throw new HttpResponseException(response.getStatusLine().getStatusCode(), response
-                                .getStatusLine().getReasonPhrase());
+                        throw new HttpResponseException(response.getStatusLine().getStatusCode(),
+                                response.getStatusLine().getReasonPhrase());
                     }
                     for (Cookie c : cookieJar.getCookies()) {
                         if (c.getName().equals("QSESSIONID")) {

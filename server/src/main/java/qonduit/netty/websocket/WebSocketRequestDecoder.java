@@ -61,8 +61,8 @@ public class WebSocketRequestDecoder extends SimpleChannelInboundHandler<WebSock
                 ErrorResponse err = new ErrorResponse();
                 err.setErrorMessage(e.getMessage());
                 err.setRequest(request);
-                ctx.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(JsonUtil.getObjectMapper()
-                        .writeValueAsBytes(err))));
+                ctx.writeAndFlush(new BinaryWebSocketFrame(
+                        Unpooled.wrappedBuffer(JsonUtil.getObjectMapper().writeValueAsBytes(err))));
                 return;
             }
         } else if (msg instanceof TextWebSocketFrame) {
@@ -88,8 +88,8 @@ public class WebSocketRequestDecoder extends SimpleChannelInboundHandler<WebSock
                 ErrorResponse err = new ErrorResponse();
                 err.setErrorMessage("Error validating web socket request: " + e.getMessage());
                 err.setRequest(request);
-                ctx.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(JsonUtil.getObjectMapper()
-                        .writeValueAsBytes(err))));
+                ctx.writeAndFlush(new BinaryWebSocketFrame(
+                        Unpooled.wrappedBuffer(JsonUtil.getObjectMapper().writeValueAsBytes(err))));
                 return;
             }
             Authorizations auths = new Authorizations();
@@ -103,8 +103,8 @@ public class WebSocketRequestDecoder extends SimpleChannelInboundHandler<WebSock
                 ErrorResponse err = new ErrorResponse();
                 err.setErrorMessage("Error during access enforcement: " + e.getMessage());
                 err.setRequest(request);
-                ctx.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(JsonUtil.getObjectMapper()
-                        .writeValueAsBytes(err))));
+                ctx.writeAndFlush(new BinaryWebSocketFrame(
+                        Unpooled.wrappedBuffer(JsonUtil.getObjectMapper().writeValueAsBytes(err))));
                 return;
             }
             Operation o = OperationResolver.getOperation(request.getOperation());
@@ -113,8 +113,8 @@ public class WebSocketRequestDecoder extends SimpleChannelInboundHandler<WebSock
                 ErrorResponse err = new ErrorResponse();
                 err.setErrorMessage("Unknown request type: {}" + request.getOperation());
                 err.setRequest(request);
-                ctx.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(JsonUtil.getObjectMapper()
-                        .writeValueAsBytes(err))));
+                ctx.writeAndFlush(new BinaryWebSocketFrame(
+                        Unpooled.wrappedBuffer(JsonUtil.getObjectMapper().writeValueAsBytes(err))));
                 return;
             }
 
@@ -143,8 +143,8 @@ public class WebSocketRequestDecoder extends SimpleChannelInboundHandler<WebSock
             ErrorResponse err = new ErrorResponse();
             err.setErrorMessage("Unhandled web socket frame type, only BinaryWebSocketFrame is supported");
             err.setRequest(request);
-            ctx.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(JsonUtil.getObjectMapper()
-                    .writeValueAsBytes(err))));
+            ctx.writeAndFlush(new BinaryWebSocketFrame(
+                    Unpooled.wrappedBuffer(JsonUtil.getObjectMapper().writeValueAsBytes(err))));
         }
     }
 

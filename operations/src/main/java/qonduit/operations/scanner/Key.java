@@ -14,7 +14,8 @@ public class Key {
     public Key() {
     }
 
-    public Key(byte[] row, byte[] colFamily, byte[] colQualifier, byte[] colVisibility, long timestamp, boolean deleted) {
+    public Key(byte[] row, byte[] colFamily, byte[] colQualifier, byte[] colVisibility, long timestamp,
+            boolean deleted) {
         super();
         this.setRow(row);
         this.setColFamily(colFamily);

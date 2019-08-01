@@ -15,12 +15,11 @@ public class OperationResolver {
 
     static {
         Map<String, Operation> m = new HashMap<>();
-        ServiceLoader.load(Operation.class).forEach(
-                s -> {
-                    LOG.info("Registering operation {} with object {}", s.getRequestType().getOperation(), s.getClass()
-                            .getSimpleName());
-                    m.put(s.getRequestType().getOperation(), s);
-                });
+        ServiceLoader.load(Operation.class).forEach(s -> {
+            LOG.info("Registering operation {} with object {}", s.getRequestType().getOperation(),
+                    s.getClass().getSimpleName());
+            m.put(s.getRequestType().getOperation(), s);
+        });
         operations = Collections.unmodifiableMap(m);
         LOG.info("Registered operations: {}", operations);
     }

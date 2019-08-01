@@ -26,10 +26,9 @@ public class OneWaySSLAnonAccessIT extends OneWaySSLBase {
         try {
             HttpsURLConnection con = getUrlConnection(new URL("https://localhost:54322/login"));
             /*
-             * Anonymous access is enabled in the server for this test, but
-             * since the client does not send client certificate information,
-             * there is no way to validate the user credentials and a 401
-             * response code is returned.
+             * Anonymous access is enabled in the server for this test, but since the client
+             * does not send client certificate information, there is no way to validate the
+             * user credentials and a 401 response code is returned.
              */
             Assert.assertEquals(401, con.getResponseCode());
         } finally {
