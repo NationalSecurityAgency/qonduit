@@ -45,7 +45,7 @@
         <version.guava>21.0</version.guava>
         <version.hadoop>2.7.3</version.hadoop>
         <version.httpcomponents>4.5.3</version.httpcomponents>
-        <version.jackson>2.9.9</version.jackson>
+        <version.jackson>2.9.10</version.jackson>
         <version.javassist>3.21.0-GA</version.javassist>
         <version.jcip-annotations>1.0</version.jcip-annotations>
         <version.jsoup>1.9.2</version.jsoup>
@@ -88,10 +88,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <!-- TODO update to .3, as soon as available to fix multiple CVEs in .2, plus the
-                  fix for the regression tracked here:
-                  https://github.com/FasterXML/jackson-databind/issues/2395 -->
-                <version>${version.jackson}.1</version>
+                <version>${version.jackson}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
