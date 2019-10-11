@@ -51,7 +51,7 @@
         <version.jsoup>1.9.2</version.jsoup>
         <version.junit>4.12</version.junit>
         <version.log4j>2.8</version.log4j>
-        <version.netty>4.0.46.Final</version.netty>
+        <version.netty>4.1.42.Final</version.netty>
         <version.netty-tcnative>2.0.1.Final</version.netty-tcnative>
         <version.powermock>1.6.4</version.powermock>
         <version.slf4j>1.7.23</version.slf4j>
