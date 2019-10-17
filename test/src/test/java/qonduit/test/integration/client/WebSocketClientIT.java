@@ -1,12 +1,6 @@
 package qonduit.test.integration.client;
 
 import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
-import io.netty.handler.ssl.ApplicationProtocolConfig;
-import io.netty.handler.ssl.JdkSslClientContext;
-import io.netty.handler.ssl.JdkSslContext;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslProvider;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +30,11 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.netty.handler.ssl.ApplicationProtocolConfig;
+import io.netty.handler.ssl.JdkSslContext;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
 import qonduit.Server;
 import qonduit.api.request.WebSocketRequest;
 import qonduit.auth.AuthCache;
@@ -50,7 +49,6 @@ import qonduit.serialize.JsonSerializer;
 import qonduit.test.IntegrationTest;
 import qonduit.test.integration.OneWaySSLBase;
 
-@SuppressWarnings("deprecation")
 @Category(IntegrationTest.class)
 public class WebSocketClientIT extends OneWaySSLBase {
 
@@ -66,7 +64,7 @@ public class WebSocketClientIT extends OneWaySSLBase {
         builder.sslProvider(SslProvider.JDK);
         builder.trustManager(clientTrustStoreFile); // Trust the server cert
         SslContext ctx = builder.build();
-        Assert.assertEquals(JdkSslClientContext.class, ctx.getClass());
+        Assert.assertTrue(ctx.isClient());
         JdkSslContext jdk = (JdkSslContext) ctx;
         sslCtx = jdk.context();
     }
@@ -81,6 +79,7 @@ public class WebSocketClientIT extends OneWaySSLBase {
         clearTablesResetConf();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         s.shutdown();

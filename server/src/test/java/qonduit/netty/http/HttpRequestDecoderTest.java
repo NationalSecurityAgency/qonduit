@@ -1,13 +1,5 @@
 package qonduit.netty.http;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaders.Names;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.cookie.ClientCookieEncoder;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -21,11 +13,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.cookie.ClientCookieEncoder;
 import qonduit.Configuration;
 import qonduit.api.response.QonduitException;
 import qonduit.auth.AuthCache;
 import qonduit.netty.Constants;
-import qonduit.netty.http.HttpRequestDecoder;
 import qonduit.test.TestConfiguration;
 
 public class HttpRequestDecoderTest {
@@ -70,7 +68,7 @@ public class HttpRequestDecoderTest {
     }
 
     private void addCookie(FullHttpRequest request) {
-        request.headers().set(Names.COOKIE, ClientCookieEncoder.STRICT.encode(Constants.COOKIE_NAME, cookie));
+        request.headers().set(HttpHeaderNames.COOKIE, ClientCookieEncoder.STRICT.encode(Constants.COOKIE_NAME, cookie));
     }
 
     /**

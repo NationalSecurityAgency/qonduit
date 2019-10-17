@@ -1,9 +1,5 @@
 package qonduit.test.integration;
 
-import io.netty.handler.codec.http.HttpHeaders.Names;
-import io.netty.handler.codec.http.cookie.ClientCookieDecoder;
-import io.netty.handler.codec.http.cookie.Cookie;
-
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
@@ -18,6 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.cookie.ClientCookieDecoder;
+import io.netty.handler.codec.http.cookie.Cookie;
 import qonduit.Server;
 import qonduit.api.request.auth.BasicAuthLoginRequest;
 import qonduit.auth.AuthCache;
@@ -33,6 +32,7 @@ import qonduit.util.JsonUtil;
 @Category(IntegrationTest.class)
 public class OneWaySSLBasicAuthAccessIT extends OneWaySSLBase {
 
+    @Override
     protected HttpsURLConnection getUrlConnection(String username, String password, URL url) throws Exception {
         HttpsURLConnection.setDefaultSSLSocketFactory(getSSLSocketFactory());
         URL loginURL = new URL(url.getProtocol() + "://" + url.getHost() + ":" + url.getPort() + "/login");
@@ -53,12 +53,12 @@ public class OneWaySSLBasicAuthAccessIT extends OneWaySSLBase {
             throw new UnauthorizedUserException();
         }
         Assert.assertEquals(200, responseCode);
-        List<String> cookies = con.getHeaderFields().get(Names.SET_COOKIE);
+        List<String> cookies = con.getHeaderFields().get(HttpHeaderNames.SET_COOKIE.toString());
         Assert.assertEquals(1, cookies.size());
         Cookie sessionCookie = ClientCookieDecoder.STRICT.decode(cookies.get(0));
         Assert.assertEquals(Constants.COOKIE_NAME, sessionCookie.name());
         con = (HttpsURLConnection) url.openConnection();
-        con.setRequestProperty(Names.COOKIE, sessionCookie.name() + "=" + sessionCookie.value());
+        con.setRequestProperty(HttpHeaderNames.COOKIE.toString(), sessionCookie.name() + "=" + sessionCookie.value());
         con.setHostnameVerifier((host, session) -> true);
         return con;
     }
@@ -69,6 +69,7 @@ public class OneWaySSLBasicAuthAccessIT extends OneWaySSLBase {
         con.securityOperations().changeUserAuthorizations("root", new Authorizations("A", "B", "C", "D", "E", "F"));
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         AuthCache.resetSessionMaxAge();

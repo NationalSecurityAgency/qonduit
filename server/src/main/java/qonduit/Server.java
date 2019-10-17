@@ -22,6 +22,7 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.cors.CorsConfig;
+import io.netty.handler.codec.http.cors.CorsConfigBuilder;
 import io.netty.handler.codec.http.cors.CorsHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.logging.LoggingHandler;
@@ -346,11 +347,11 @@ public class Server {
                 ch.pipeline().addLast("aggregator", new HttpObjectAggregator(8192));
                 ch.pipeline().addLast("chunker", new ChunkedWriteHandler());
                 final Configuration.Cors corsCfg = config.getHttp().getCors();
-                final CorsConfig.Builder ccb;
+                final CorsConfigBuilder ccb;
                 if (corsCfg.isAllowAnyOrigin()) {
-                    ccb = new CorsConfig.Builder();
+                    ccb = CorsConfigBuilder.forAnyOrigin();
                 } else {
-                    ccb = new CorsConfig.Builder(corsCfg.getAllowedOrigins().stream().toArray(String[]::new));
+                    ccb = CorsConfigBuilder.forOrigins(corsCfg.getAllowedOrigins().stream().toArray(String[]::new));
                 }
                 if (corsCfg.isAllowNullOrigin()) {
                     ccb.allowNullOrigin();

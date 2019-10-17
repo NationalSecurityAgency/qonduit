@@ -9,6 +9,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelProgressivePromise;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.DefaultChannelPromise;
+import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.EventExecutor;
@@ -30,8 +31,9 @@ public class CaptureChannelHandlerContext implements ChannelHandlerContext {
     }
 
     public Object msg = null;
-    private TestDefaultPromise promise = new TestDefaultPromise(null);
+    private TestDefaultPromise promise = new TestDefaultPromise(new EmbeddedChannel());
 
+    @Deprecated
     @Override
     public <T> Attribute<T> attr(AttributeKey<T> key) {
         return null;
@@ -231,6 +233,12 @@ public class CaptureChannelHandlerContext implements ChannelHandlerContext {
     @Override
     public ChannelPromise voidPromise() {
         return promise;
+    }
+
+    @Deprecated
+    @Override
+    public <T> boolean hasAttr(AttributeKey<T> key) {
+        return false;
     }
 
 }

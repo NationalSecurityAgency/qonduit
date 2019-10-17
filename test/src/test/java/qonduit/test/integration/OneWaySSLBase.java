@@ -1,26 +1,28 @@
 package qonduit.test.integration;
 
-import io.netty.handler.ssl.*;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-
-import qonduit.Configuration;
-import qonduit.auth.AuthCache;
+import java.io.File;
+import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
-import java.io.File;
-import java.net.URL;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+
+import io.netty.handler.ssl.ApplicationProtocolConfig;
+import io.netty.handler.ssl.JdkSslContext;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
+import io.netty.handler.ssl.util.SelfSignedCertificate;
+import qonduit.Configuration;
+import qonduit.auth.AuthCache;
 
 /**
  * Base test class for SSL with anonymous access
  */
-@SuppressWarnings("deprecation")
 public class OneWaySSLBase extends QueryBase {
 
     protected static File clientTrustStoreFile = null;
@@ -31,7 +33,7 @@ public class OneWaySSLBase extends QueryBase {
         builder.sslProvider(SslProvider.JDK);
         builder.trustManager(clientTrustStoreFile); // Trust the server cert
         SslContext ctx = builder.build();
-        Assert.assertEquals(JdkSslClientContext.class, ctx.getClass());
+        Assert.assertTrue(ctx.isClient());
         JdkSslContext jdk = (JdkSslContext) ctx;
         SSLContext jdkSslContext = jdk.context();
         return jdkSslContext.getSocketFactory();
@@ -58,6 +60,7 @@ public class OneWaySSLBase extends QueryBase {
         return getUrlConnection(url);
     }
 
+    @Override
     protected HttpsURLConnection getUrlConnection(URL url) throws Exception {
         HttpsURLConnection.setDefaultSSLSocketFactory(getSSLSocketFactory());
         HttpsURLConnection con = (HttpsURLConnection) url.openConnection();

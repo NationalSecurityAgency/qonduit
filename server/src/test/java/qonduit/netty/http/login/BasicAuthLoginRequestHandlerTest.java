@@ -1,16 +1,5 @@
 package qonduit.netty.http.login;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaders.Names;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.cookie.ClientCookieDecoder;
-import io.netty.handler.codec.http.cookie.Cookie;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +10,16 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.cookie.ClientCookieDecoder;
+import io.netty.handler.codec.http.cookie.Cookie;
 import qonduit.Configuration;
 import qonduit.api.BasicAuthLogin;
 import qonduit.api.request.auth.BasicAuthLoginRequest;
@@ -86,11 +85,11 @@ public class BasicAuthLoginRequestHandlerTest {
         Assert.assertNotNull(ctx.msg);
         Assert.assertTrue(ctx.msg instanceof DefaultFullHttpResponse);
         DefaultFullHttpResponse response = (DefaultFullHttpResponse) ctx.msg;
-        Assert.assertEquals(HttpResponseStatus.OK, response.getStatus());
-        Assert.assertTrue(response.headers().contains(Names.CONTENT_TYPE));
-        Assert.assertEquals(Constants.JSON_TYPE, response.headers().get(Names.CONTENT_TYPE));
-        Assert.assertTrue(response.headers().contains(Names.SET_COOKIE));
-        Cookie c = ClientCookieDecoder.STRICT.decode(response.headers().get(Names.SET_COOKIE));
+        Assert.assertEquals(HttpResponseStatus.OK, response.status());
+        Assert.assertTrue(response.headers().contains(HttpHeaderNames.CONTENT_TYPE));
+        Assert.assertEquals(Constants.JSON_TYPE, response.headers().get(HttpHeaderNames.CONTENT_TYPE));
+        Assert.assertTrue(response.headers().contains(HttpHeaderNames.SET_COOKIE));
+        Cookie c = ClientCookieDecoder.STRICT.decode(response.headers().get(HttpHeaderNames.SET_COOKIE));
         Assert.assertEquals(TestConfiguration.HTTP_ADDRESS_DEFAULT, c.domain());
         Assert.assertEquals(86400, c.maxAge());
         Assert.assertTrue(c.isHttpOnly());
@@ -121,9 +120,9 @@ public class BasicAuthLoginRequestHandlerTest {
         Assert.assertNotNull(ctx.msg);
         Assert.assertTrue(ctx.msg instanceof DefaultFullHttpResponse);
         DefaultFullHttpResponse response = (DefaultFullHttpResponse) ctx.msg;
-        Assert.assertEquals(HttpResponseStatus.UNAUTHORIZED, response.getStatus());
-        Assert.assertTrue(response.headers().contains(Names.CONTENT_TYPE));
-        Assert.assertEquals(Constants.JSON_TYPE, response.headers().get(Names.CONTENT_TYPE));
+        Assert.assertEquals(HttpResponseStatus.UNAUTHORIZED, response.status());
+        Assert.assertTrue(response.headers().contains(HttpHeaderNames.CONTENT_TYPE));
+        Assert.assertEquals(Constants.JSON_TYPE, response.headers().get(HttpHeaderNames.CONTENT_TYPE));
     }
 
 }
