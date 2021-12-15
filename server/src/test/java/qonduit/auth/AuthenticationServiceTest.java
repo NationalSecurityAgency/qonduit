@@ -11,8 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
-import qonduit.auth.AuthenticationService;
-
 public class AuthenticationServiceTest {
 
     @Test(expected = BadCredentialsException.class)

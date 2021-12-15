@@ -1,7 +1,5 @@
 package qonduit;
 
-import qonduit.Configuration;
-import qonduit.Server;
 import qonduit.netty.http.NonSslRedirectHandler;
 import qonduit.test.TestCaptureRequestHandler;
 import io.netty.channel.ChannelHandler;

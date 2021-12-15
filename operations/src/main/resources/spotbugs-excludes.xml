@@ -12,4 +12,12 @@
     <Class name="qonduit.operations.scanner.ScanRequest$Column" />
     <Bug pattern="EI_EXPOSE_REP" />  
   </Match>
+  <Match>
+    <!-- these are probably avoidable, but needs further triage to fix -->
+    <Bug pattern="EI_EXPOSE_REP" />
+  </Match>
+  <Match>
+    <!-- these are probably avoidable, but needs further triage to fix -->
+    <Bug pattern="EI_EXPOSE_REP2" />
+  </Match>
 </FindBugsFilter>

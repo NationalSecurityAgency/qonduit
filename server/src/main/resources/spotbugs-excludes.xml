@@ -9,4 +9,16 @@
     <Class name="qonduit.operation.BatchingOperation" />
     <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />  
   </Match>
+  <Match>
+    <!-- these are probably avoidable, but needs further triage to fix -->
+    <Bug pattern="MS_EXPOSE_REP" />
+  </Match>
+  <Match>
+    <!-- these are probably avoidable, but needs further triage to fix -->
+    <Bug pattern="EI_EXPOSE_REP" />
+  </Match>
+  <Match>
+    <!-- these are probably avoidable, but needs further triage to fix -->
+    <Bug pattern="EI_EXPOSE_REP2" />
+  </Match>
 </FindBugsFilter>

@@ -14,8 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import qonduit.Configuration;
-import qonduit.auth.AuthCache;
-import qonduit.auth.AuthenticationService;
 import qonduit.test.TestConfiguration;
 
 public class AuthCacheTest {
