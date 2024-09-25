@@ -43,7 +43,7 @@
         <version.commons-lang3>3.5</version.commons-lang3>
         <version.disruptor>3.3.6</version.disruptor>
         <version.guava>32.0.0-jre</version.guava>
-        <version.hadoop>2.10.1</version.hadoop>
+        <version.hadoop>3.4.0</version.hadoop>
         <version.httpcomponents>4.5.13</version.httpcomponents>
         <version.jackson>2.13.2</version.jackson>
         <version.javassist>3.21.0-GA</version.javassist>
