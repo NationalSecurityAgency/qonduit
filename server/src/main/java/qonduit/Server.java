@@ -1,5 +1,21 @@
 package qonduit;
 
+import java.io.File;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -36,22 +52,6 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.internal.SystemPropertyUtil;
-
-import java.io.File;
-import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
-
 import qonduit.auth.AuthCache;
 import qonduit.auth.VisibilityCache;
 import qonduit.netty.http.HttpExceptionHandler;
@@ -145,7 +145,7 @@ public class Server {
     }
 
     protected static Configuration initializeConfiguration(String[] args) {
-        applicationContext = new SpringApplicationBuilder(SpringBootstrap.class).web(false).run(args);
+        applicationContext = new SpringApplicationBuilder(SpringBootstrap.class).web(WebApplicationType.NONE).run(args);
         return applicationContext.getBean(Configuration.class);
     }
 

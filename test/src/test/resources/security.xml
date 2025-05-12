@@ -16,7 +16,7 @@
     <beans:bean id="qonduitUserDetailsService" class="qonduit.auth.UserDetailsService">
     	<beans:property name="users">
     		<util:map key-type="java.lang.String">
-    			<beans:entry key="example.com">
+    			<beans:entry key="localhost">
    					<util:list>
    						<beans:value>D</beans:value>
    						<beans:value>E</beans:value>
@@ -35,7 +35,10 @@
     	<user name="test" password="test1" authorities="A,B,C" />
     </user-service>
     
+    <beans:bean id="noopPasswordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>
+    
     <beans:bean id="UserNamePasswordAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <beans:property name="PasswordEncoder" ref="noopPasswordEncoder"/>
 		<beans:property name="userDetailsService" ref="usernamePasswordService"/>
 	</beans:bean>
 	    

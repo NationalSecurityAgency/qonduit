@@ -1,28 +1,28 @@
 package qonduit.operations.scanner;
 
-import io.netty.channel.ChannelHandlerContext;
-
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import jline.internal.Log;
-
-import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.Scanner;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.hadoop.io.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import io.netty.channel.ChannelHandlerContext;
 import qonduit.api.request.WebSocketRequest;
 import qonduit.operation.BatchingOperation;
 
 public class ScanOperation extends BatchingOperation<KVPair> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ScanOperation.class);
     private static final ScanRequest requestType = new ScanRequest();
     private ScanRequest request = null;
 
     @Override
-    public void init(ChannelHandlerContext context, Connector connector, Authorizations auths, WebSocketRequest r) {
-        super.init(context, connector, auths, r);
+    public void init(ChannelHandlerContext context, AccumuloClient client, Authorizations auths, WebSocketRequest r) {
+        super.init(context, client, auths, r);
         if (r instanceof ScanRequest) {
             this.request = (ScanRequest) r;
             this.setBatchSize(this.request.getResultBatchSize());
@@ -34,7 +34,7 @@ public class ScanOperation extends BatchingOperation<KVPair> {
     @Override
     public void run() {
         try {
-            Scanner s = this.connector.createScanner(this.request.getTableName(), auths);
+            Scanner s = this.client.createScanner(this.request.getTableName(), auths);
             s.setBatchSize(this.request.getScannerBatchSize());
             s.setReadaheadThreshold(this.request.getScannerReadAhead());
             if (0 != this.request.getTimeoutSeconds()) {
@@ -70,14 +70,14 @@ public class ScanOperation extends BatchingOperation<KVPair> {
             kv.setEndOfResults(true);
             this.add(kv);
         } catch (Exception e) {
-            Log.error("Error during scan operation, request: {}", this.request.getRequestId(), e);
+            LOG.error("Error during scan operation, request: {}", this.request.getRequestId(), e);
             KVPair kv = new KVPair();
             kv.setRequestId(this.request.getRequestId());
             kv.setErrorMessage(e.getMessage());
             try {
                 this.add(kv);
             } catch (Exception e1) {
-                Log.error("Error sending error back to client, request: {}", this.request.getRequestId(), e1);
+                LOG.error("Error sending error back to client, request: {}", this.request.getRequestId(), e1);
             }
         } finally {
             flush();

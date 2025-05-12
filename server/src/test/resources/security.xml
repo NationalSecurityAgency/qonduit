@@ -35,7 +35,10 @@
     	<user name="test" password="test1" authorities="A,B,C" />
     </user-service>
     
+    <beans:bean id="noopPasswordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>
+    
     <beans:bean id="UserNamePasswordAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <beans:property name="PasswordEncoder" ref="noopPasswordEncoder"/>
 		<beans:property name="userDetailsService" ref="usernamePasswordService"/>
 	</beans:bean>
 	    

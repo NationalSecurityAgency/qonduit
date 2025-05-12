@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import org.apache.accumulo.core.client.BatchWriterConfig;
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import qonduit.validator.NotEmptyIfFieldSet;
 import com.google.common.collect.Lists;
 
 @Component
-@ConfigurationProperties(prefix = "qonduit")
+@ConfigurationProperties(prefix = "qonduit", ignoreUnknownFields = false, ignoreInvalidFields = false)
 public class Configuration {
 
     @Valid

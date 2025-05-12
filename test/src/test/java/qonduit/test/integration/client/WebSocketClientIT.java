@@ -14,9 +14,10 @@ import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
-import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.security.Authorizations;
@@ -71,8 +72,8 @@ public class WebSocketClientIT extends OneWaySSLBase {
 
     @Before
     public void setup() throws Exception {
-        Connector con = mac.getConnector("root", "secret");
-        con.securityOperations().changeUserAuthorizations("root", new Authorizations("A", "B", "C", "D", "E", "F"));
+        AccumuloClient client = mac.createAccumuloClient("root", new PasswordToken("secret"));
+        client.securityOperations().changeUserAuthorizations("root", new Authorizations("A", "B", "C", "D", "E", "F"));
         s = new Server(conf);
         s.run();
         setupSslCtx();
@@ -176,12 +177,12 @@ public class WebSocketClientIT extends OneWaySSLBase {
     private void doScan(WebSocketClient client) throws Exception {
         long now = System.currentTimeMillis();
         String tableName = "qonduit.scanTest";
-        Connector con = mac.getConnector(MAC_ROOT_USER, MAC_ROOT_PASSWORD);
-        con.namespaceOperations().create("qonduit");
-        con.tableOperations().create(tableName);
+        AccumuloClient accumulo = mac.createAccumuloClient(MAC_ROOT_USER, new PasswordToken(MAC_ROOT_PASSWORD));
+        accumulo.namespaceOperations().create("qonduit");
+        accumulo.tableOperations().create(tableName);
         BatchWriterConfig bwc = new BatchWriterConfig();
         bwc.setMaxLatency(2, TimeUnit.SECONDS);
-        BatchWriter writer = con.createBatchWriter(tableName, bwc);
+        BatchWriter writer = accumulo.createBatchWriter(tableName, bwc);
 
         ColumnVisibility cv = new ColumnVisibility();
         for (int i = 0; i < 10; i++) {

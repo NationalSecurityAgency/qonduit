@@ -8,7 +8,8 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
-import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.AccumuloClient;
+import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.accumulo.minicluster.MiniAccumuloCluster;
 import org.apache.accumulo.minicluster.MiniAccumuloConfig;
@@ -137,12 +138,12 @@ public class TwoWaySSLIT extends QueryBase {
 
     @Before
     public void setup() throws Exception {
-        Connector con = mac.getConnector("root", "secret");
-        con.securityOperations().changeUserAuthorizations("root", new Authorizations("A", "B", "C", "D", "E", "F"));
-        con.tableOperations().list().forEach(t -> {
+        AccumuloClient client = mac.createAccumuloClient("root", new PasswordToken("secret"));
+        client.securityOperations().changeUserAuthorizations("root", new Authorizations("A", "B", "C", "D", "E", "F"));
+        client.tableOperations().list().forEach(t -> {
             if (t.startsWith("qonduit")) {
                 try {
-                    con.tableOperations().delete(t);
+                    client.tableOperations().delete(t);
                 } catch (Exception e) {
                 }
             }

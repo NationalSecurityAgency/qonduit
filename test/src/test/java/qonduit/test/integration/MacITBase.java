@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.AccumuloClient;
+import org.apache.accumulo.core.client.security.tokens.PasswordToken;
+import org.apache.accumulo.core.security.Authorizations;
 import org.apache.accumulo.minicluster.MiniAccumuloCluster;
 import org.apache.accumulo.minicluster.MiniAccumuloConfig;
 import org.junit.Before;
@@ -57,11 +59,12 @@ public class MacITBase {
 
     @Before
     public void clearTablesResetConf() throws Exception {
-        Connector con = mac.getConnector(MAC_ROOT_USER, MAC_ROOT_PASSWORD);
-        con.tableOperations().list().forEach(t -> {
+        AccumuloClient client = mac.createAccumuloClient("root", new PasswordToken("secret"));
+        client.securityOperations().changeUserAuthorizations("root", new Authorizations("A", "B", "C", "D", "E", "F"));
+        client.tableOperations().list().forEach(t -> {
             if (t.startsWith("qonduit")) {
                 try {
-                    con.tableOperations().delete(t);
+                    client.tableOperations().delete(t);
                 } catch (Exception e) {
                 }
             }

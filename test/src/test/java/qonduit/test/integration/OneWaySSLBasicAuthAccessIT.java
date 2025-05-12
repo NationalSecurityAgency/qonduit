@@ -6,7 +6,8 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.AccumuloClient;
+import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.apache.accumulo.core.security.Authorizations;
 import org.junit.After;
 import org.junit.Assert;
@@ -65,8 +66,8 @@ public class OneWaySSLBasicAuthAccessIT extends OneWaySSLBase {
 
     @Before
     public void setup() throws Exception {
-        Connector con = mac.getConnector("root", "secret");
-        con.securityOperations().changeUserAuthorizations("root", new Authorizations("A", "B", "C", "D", "E", "F"));
+        AccumuloClient client = mac.createAccumuloClient("root", new PasswordToken("secret"));
+        client.securityOperations().changeUserAuthorizations("root", new Authorizations("A", "B", "C", "D", "E", "F"));
     }
 
     @Override
