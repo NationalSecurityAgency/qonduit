@@ -1,5 +1,12 @@
 package qonduit.netty.websocket;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.accumulo.core.security.Authorizations;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -14,15 +21,7 @@ import io.netty.handler.ssl.SslCompletionEvent;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.ScheduledFuture;
-
-import java.util.concurrent.TimeUnit;
-
-import org.apache.accumulo.core.security.Authorizations;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import qonduit.Configuration;
+import qonduit.Server;
 import qonduit.api.request.AuthenticatedRequest;
 import qonduit.api.request.WebSocketRequest;
 import qonduit.api.response.QonduitException;
@@ -30,19 +29,16 @@ import qonduit.auth.AuthCache;
 import qonduit.operation.ErrorResponse;
 import qonduit.operation.Operation;
 import qonduit.operation.OperationResolver;
-import qonduit.store.DataStore;
 import qonduit.util.JsonUtil;
 
 public class WebSocketRequestDecoder extends SimpleChannelInboundHandler<WebSocketFrame> {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebSocketRequestDecoder.class);
 
-    private final DataStore ds;
-    private final Configuration conf;
+    private final Server server;
 
-    public WebSocketRequestDecoder(DataStore ds, Configuration conf) {
-        this.ds = ds;
-        this.conf = conf;
+    public WebSocketRequestDecoder(Server server) {
+        this.server = server;
     }
 
     @Override
@@ -94,8 +90,8 @@ public class WebSocketRequestDecoder extends SimpleChannelInboundHandler<WebSock
             }
             Authorizations auths = new Authorizations();
             try {
-                AuthCache.enforceAccess(conf, sessionId);
-                if (!this.conf.getSecurity().isAllowAnonymousAccess()) {
+                AuthCache.enforceAccess(server.getConfiguration(), sessionId);
+                if (!server.getConfiguration().getSecurity().isAllowAnonymousAccess()) {
                     auths = AuthCache.getAuthorizations(sessionId);
                 }
             } catch (QonduitException e) {
@@ -119,11 +115,11 @@ public class WebSocketRequestDecoder extends SimpleChannelInboundHandler<WebSock
             }
 
             // Execute this operation
-            o.init(ctx, ds.getConnector(), auths, request);
+            o.init(ctx, server, auths, request);
             ctx.executor().execute(o);
 
             // send a websocket ping at half the timeout interval.
-            int rate = conf.getWebsocket().getTimeout() / 2;
+            int rate = server.getConfiguration().getWebsocket().getTimeout() / 2;
             final ScheduledFuture<?> ping = ctx.executor().scheduleAtFixedRate(() -> {
                 LOG.trace("Sending ping on channel {}", ctx.channel());
                 ctx.writeAndFlush(new PingWebSocketFrame());

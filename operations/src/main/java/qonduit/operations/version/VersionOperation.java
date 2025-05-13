@@ -1,6 +1,5 @@
 package qonduit.operations.version;
 
-import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.security.Authorizations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import qonduit.Server;
 import qonduit.api.request.WebSocketRequest;
 import qonduit.operation.Operation;
 import qonduit.serialize.JsonSerializer;
@@ -24,7 +24,7 @@ public class VersionOperation implements Operation {
     private ChannelHandlerContext ctx = null;
 
     @Override
-    public void init(ChannelHandlerContext context, AccumuloClient client, Authorizations auths, WebSocketRequest r) {
+    public void init(ChannelHandlerContext context, Server server, Authorizations auths, WebSocketRequest r) {
         if (r instanceof VersionRequest) {
             this.request = (VersionRequest) r;
         } else {

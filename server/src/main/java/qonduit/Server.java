@@ -65,6 +65,8 @@ import qonduit.netty.websocket.WebSocketRequestDecoder;
 import qonduit.operation.OperationResolver;
 import qonduit.store.DataStore;
 import qonduit.store.DataStoreFactory;
+import qonduit.store.SplitStore;
+import qonduit.store.SplitStoreFactory;
 
 public class Server {
 
@@ -87,6 +89,7 @@ public class Server {
     protected Channel httpChannelHandle = null;
     protected Channel wsChannelHandle = null;
     protected DataStore dataStore = null;
+    protected SplitStore splitStore = null;
     protected volatile boolean shutdown = false;
 
     private static boolean useEpoll() {
@@ -225,14 +228,26 @@ public class Server {
     }
 
     public Server(Configuration conf) throws Exception {
-
         this.config = conf;
+    }
+
+    public Configuration getConfiguration() {
+        return config;
+    }
+
+    public DataStore getDataStore() {
+        return dataStore;
+    }
+
+    public SplitStore getSplitStore() {
+        return splitStore;
     }
 
     public void run() throws Exception {
 
         new OperationResolver();
         dataStore = DataStoreFactory.create(config);
+        splitStore = SplitStoreFactory.create(config, dataStore);
         // initialize the auth cache
         AuthCache.setSessionMaxAge(config);
         // Initialize the VisibilityCache
@@ -270,7 +285,7 @@ public class Server {
         httpServer.group(httpBossGroup, httpWorkerGroup);
         httpServer.channel(channelClass);
         httpServer.handler(new LoggingHandler());
-        httpServer.childHandler(setupHttpChannel(config, sslCtx));
+        httpServer.childHandler(setupHttpChannel(sslCtx));
         httpServer.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
         httpChannelHandle = httpServer.bind(httpIp, httpPort).sync().channel();
         final String httpAddress = ((InetSocketAddress) httpChannelHandle.localAddress()).getAddress().getHostAddress();
@@ -281,7 +296,7 @@ public class Server {
         wsServer.group(wsBossGroup, wsWorkerGroup);
         wsServer.channel(channelClass);
         wsServer.handler(new LoggingHandler());
-        wsServer.childHandler(setupWSChannel(sslCtx, config, dataStore));
+        wsServer.childHandler(setupWSChannel(sslCtx, this));
         wsServer.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
         wsChannelHandle = wsServer.bind(wsIp, wsPort).sync().channel();
         final String wsAddress = ((InetSocketAddress) wsChannelHandle.localAddress()).getAddress().getHostAddress();
@@ -332,7 +347,7 @@ public class Server {
         return ssl.build();
     }
 
-    protected ChannelHandler setupHttpChannel(Configuration config, SslContext sslCtx) {
+    protected ChannelHandler setupHttpChannel(SslContext sslCtx) {
 
         return new ChannelInitializer<SocketChannel>() {
 
@@ -373,7 +388,7 @@ public class Server {
         };
     }
 
-    protected ChannelHandler setupWSChannel(SslContext sslCtx, Configuration conf, DataStore datastore) {
+    protected ChannelHandler setupWSChannel(SslContext sslCtx, Server server) {
         return new ChannelInitializer<SocketChannel>() {
 
             @Override
@@ -382,9 +397,9 @@ public class Server {
                 ch.pipeline().addLast("httpServer", new HttpServerCodec());
                 ch.pipeline().addLast("aggregator", new HttpObjectAggregator(8192));
                 ch.pipeline().addLast("sessionExtractor", new WebSocketHttpCookieHandler(config));
-                ch.pipeline().addLast("idle-handler", new IdleStateHandler(conf.getWebsocket().getTimeout(), 0, 0));
+                ch.pipeline().addLast("idle-handler", new IdleStateHandler(config.getWebsocket().getTimeout(), 0, 0));
                 ch.pipeline().addLast("ws-protocol", new WebSocketServerProtocolHandler(WS_PATH, null, true));
-                ch.pipeline().addLast("wsDecoder", new WebSocketRequestDecoder(datastore, config));
+                ch.pipeline().addLast("wsDecoder", new WebSocketRequestDecoder(server));
                 ch.pipeline().addLast("error", new WSExceptionHandler());
             }
         };

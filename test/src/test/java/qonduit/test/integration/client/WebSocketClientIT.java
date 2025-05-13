@@ -20,8 +20,11 @@ import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
+import org.apache.accumulo.core.metadata.MetadataTable;
+import org.apache.accumulo.core.metadata.RootTable;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.accumulo.core.security.ColumnVisibility;
+import org.apache.accumulo.core.util.Pair;
 import org.apache.http.client.HttpResponseException;
 import org.junit.After;
 import org.junit.Assert;
@@ -44,6 +47,8 @@ import qonduit.client.websocket.WebSocketClient;
 import qonduit.operations.scanner.KVPair;
 import qonduit.operations.scanner.ScanRequest;
 import qonduit.operations.scanner.Value;
+import qonduit.operations.splits.SplitLookupRequest;
+import qonduit.operations.splits.SplitLookupResponse;
 import qonduit.operations.version.VersionRequest;
 import qonduit.operations.version.VersionResponse;
 import qonduit.serialize.JsonSerializer;
@@ -87,7 +92,7 @@ public class WebSocketClientIT extends OneWaySSLBase {
         AuthCache.resetSessionMaxAge();
     }
 
-    public void doIt(WebSocketClient client, WebSocketRequest request, List<byte[]> responses, int wait)
+    public static void doIt(WebSocketClient client, WebSocketRequest request, List<byte[]> responses, int wait)
             throws Exception {
 
         ClientHandler handler = new ClientHandler() {
@@ -225,4 +230,35 @@ public class WebSocketClientIT extends OneWaySSLBase {
         doScan(client);
     }
 
+    private Pair<String, String> doSplitLookup(WebSocketClient client, String tableName, String row,
+            boolean errorExpected, String errMsgPrefix) throws Exception {
+        List<byte[]> responses = new ArrayList<>();
+        String id = UUID.randomUUID().toString();
+        SplitLookupRequest request = new SplitLookupRequest();
+        request.setRequestId(id);
+        request.setTableName(tableName);
+        request.setRow(row);
+        doIt(client, request, responses, 1);
+        Assert.assertEquals(1, responses.size());
+        SplitLookupResponse response = JsonSerializer.getObjectMapper().readValue(responses.get(0),
+                SplitLookupResponse.class);
+        Assert.assertEquals(id, response.getRequestId());
+        Assert.assertEquals(response.isError(), errorExpected);
+        Assert.assertTrue(response.isEndOfResults());
+        if (errorExpected) {
+            Assert.assertTrue(response.getErrorMessage().startsWith(errMsgPrefix));
+            return null;
+        } else {
+            return new Pair<>(response.getBeginRow(), response.getEndRow());
+        }
+    }
+
+    @Test
+    public void testSplitLookupRootAndMeta() throws Exception {
+
+        WebSocketClient client = new WebSocketClient(sslCtx, "localhost", 54322, 54323, false, null, null, false,
+                65536);
+        Assert.assertNull(doSplitLookup(client, RootTable.NAME, "a", true, "Split server is disabled."));
+        Assert.assertNull(doSplitLookup(client, MetadataTable.NAME, "a", true, "Split server is disabled."));
+    }
 }
