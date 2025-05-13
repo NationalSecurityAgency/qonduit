@@ -18,7 +18,7 @@ import qonduit.validator.NotEmptyIfFieldSet;
 import com.google.common.collect.Lists;
 
 @Component
-@ConfigurationProperties(prefix = "qonduit", ignoreUnknownFields = false, ignoreInvalidFields = false)
+@ConfigurationProperties(prefix = "qonduit")
 public class Configuration {
 
     @Valid
