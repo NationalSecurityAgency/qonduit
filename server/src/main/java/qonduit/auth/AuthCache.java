@@ -21,7 +21,7 @@ public class AuthCache {
 
     private static Cache<String, Authentication> CACHE = null;
 
-    private static int sessionMaxAge = -1;
+    private static volatile int sessionMaxAge = -1;
 
     /**
      * For tests only

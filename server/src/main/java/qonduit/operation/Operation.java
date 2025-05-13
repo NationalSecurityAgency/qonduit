@@ -1,10 +1,9 @@
 package qonduit.operation;
 
-import io.netty.channel.ChannelHandlerContext;
-
-import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.security.Authorizations;
 
+import io.netty.channel.ChannelHandlerContext;
 import qonduit.api.request.WebSocketRequest;
 
 public interface Operation extends Runnable {
@@ -12,7 +11,7 @@ public interface Operation extends Runnable {
     /**
      * Initialize the operation so that it's ready to run
      */
-    public void init(ChannelHandlerContext context, Connector connector, Authorizations auths, WebSocketRequest r);
+    public void init(ChannelHandlerContext context, AccumuloClient client, Authorizations auths, WebSocketRequest r);
 
     /**
      * 

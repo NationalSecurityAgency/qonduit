@@ -17,8 +17,6 @@ public class JsonUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonUtil.class);
     private static final ObjectMapper mapper = new ObjectMapper(new CBORFactory());
-    // private static final ObjectMapper cbor = new ObjectMapper(new
-    // CBORFactory());
 
     static {
         mapper.registerModule(new Jdk8Module());

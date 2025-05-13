@@ -10,7 +10,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 
-import org.apache.accumulo.core.client.Connector;
+import org.apache.accumulo.core.client.AccumuloClient;
+import org.apache.accumulo.core.client.security.tokens.PasswordToken;
+import org.apache.accumulo.core.security.Authorizations;
 import org.apache.accumulo.minicluster.MiniAccumuloCluster;
 import org.apache.accumulo.minicluster.MiniAccumuloConfig;
 import org.junit.After;
@@ -144,11 +146,12 @@ public class TwoWaySSLFailureIT extends QueryBase {
 
     @Before
     public void setup() throws Exception {
-        Connector con = mac.getConnector("root", "secret");
-        con.tableOperations().list().forEach(t -> {
+        AccumuloClient client = mac.createAccumuloClient("root", new PasswordToken("secret"));
+        client.securityOperations().changeUserAuthorizations("root", new Authorizations("A", "B", "C", "D", "E", "F"));
+        client.tableOperations().list().forEach(t -> {
             if (t.startsWith("qonduit")) {
                 try {
-                    con.tableOperations().delete(t);
+                    client.tableOperations().delete(t);
                 } catch (Exception e) {
                 }
             }

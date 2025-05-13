@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>qonduit</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Qonduit</name>
     <description>A secure web socket proxy for Apache Accumulo</description>
@@ -29,37 +29,39 @@
         <module>test</module>
     </modules>
     <properties>
+        <extraTestArgs>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.management/java.lang.management=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED</extraTestArgs>
         <!-- Configure the os-maven-plugin extension to expand the classifier on -->
         <!-- Fedora-"like" systems. -->
         <os.detection.classifierWithLikes>fedora</os.detection.classifierWithLikes>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- dependency versions -->
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <version.accumulo>1.10.1</version.accumulo>
-        <version.caffeine>2.4.0</version.caffeine>
-        <version.commons-collections4>4.1</version.commons-collections4>
-        <version.commons-lang3>3.5</version.commons-lang3>
-        <version.disruptor>3.3.6</version.disruptor>
-        <version.guava>32.0.0-jre</version.guava>
-        <version.hadoop>2.10.1</version.hadoop>
-        <version.httpcomponents>4.5.13</version.httpcomponents>
-        <version.jackson>2.13.2</version.jackson>
-        <version.javassist>3.21.0-GA</version.javassist>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <version.accumulo>2.1.3</version.accumulo>
+        <version.beanutils>1.10.1</version.beanutils>
+        <version.caffeine>3.2.0</version.caffeine>
+        <version.commons-collections4>4.5.0</version.commons-collections4>
+        <version.commons-lang3>3.17.0</version.commons-lang3>
+        <version.disruptor>3.4.4</version.disruptor>
+        <version.guava>33.4.6-jre</version.guava>
+        <version.hadoop>3.3.6</version.hadoop>
+        <version.httpcomponents>4.5.14</version.httpcomponents>
+        <version.jackson>2.18.3</version.jackson>
+        <version.javassist>3.30.2-GA</version.javassist>
         <version.jcip-annotations>1.0</version.jcip-annotations>
         <version.junit>4.13.1</version.junit>
-        <version.log4j>2.17.1</version.log4j>
-        <version.netty>4.1.42.Final</version.netty>
-        <version.netty-tcnative>2.0.1.Final</version.netty-tcnative>
-        <version.powermock>1.6.4</version.powermock>
-        <version.slf4j>1.7.23</version.slf4j>
-        <version.spring-boot>1.4.1.RELEASE</version.spring-boot>
+        <version.log4j>2.24.3</version.log4j>
+        <version.netty>4.1.121.Final</version.netty>
+        <version.netty-tcnative>2.0.71.Final</version.netty-tcnative>
+        <version.powermock>1.6.6</version.powermock>
+        <version.slf4j>2.0.17</version.slf4j>
+        <version.spring-boot>3.4.5</version.spring-boot>
         <!-- plugin versions -->
         <version.eclipse-lifecycle>1.0.0</version.eclipse-lifecycle>
-        <version.spotbugs-maven>4.5.0.0</version.spotbugs-maven>
+        <version.spotbugs-maven>4.9.3.0</version.spotbugs-maven>
         <version.formatter>2.10.0</version.formatter>
-        <version.jacoco>0.8.4</version.jacoco>
+        <version.jacoco>0.8.13</version.jacoco>
         <version.maven-assembly>3.1.1</version.maven-assembly>
         <version.maven-build-helper>3.0.0</version.maven-build-helper>
         <version.maven-compiler>3.8.1</version.maven-compiler>
@@ -105,12 +107,17 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
+                <version>${version.beanutils}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>${version.netty}</version>
+            </dependency>
+            <dependency>
+              <groupId>javax.validation</groupId>
+              <artifactId>validation-api</artifactId>
+              <version>2.0.1.Final</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -251,7 +258,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.18.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -265,7 +272,6 @@
                     <configuration>
                         <configFile>${project.parent.basedir}/eclipse/Eclipse-Formatter.xml</configFile>
                         <lineEnding>LF</lineEnding>
-                        <overrideConfigCompilerVersion>true</overrideConfigCompilerVersion>
                         <skipJsFormatting>true</skipJsFormatting>
                         <skipHtmlFormatting>true</skipHtmlFormatting>
                         <skipXmlFormatting>true</skipXmlFormatting>
@@ -322,7 +328,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${version.maven-surefire}</version>
                     <configuration>
-                        <argLine>${sureFireArgLine} -Djava.library.path=${project.build.directory}/native/META-INF/native/libnetty-tcnative.so -Dzookeeper.sasl.client=false</argLine>
+                        <argLine>${extraTestArgs} ${sureFireArgLine} -Djava.library.path=${project.build.directory}/native/META-INF/native/libnetty-tcnative.so -Dzookeeper.sasl.client=false</argLine>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     </configuration>
                 </plugin>
@@ -423,7 +429,7 @@
                             <rules>
                                 <requireMavenVersion>
                                     <!-- some build plugins declare 3.3.9 as a prerequisite -->
-                                    <version>[3.3.9,)</version>
+                                    <version>[3.6.3,)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
                                     <version>[${maven.compiler.source},)</version>
