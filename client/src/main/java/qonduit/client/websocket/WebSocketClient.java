@@ -64,16 +64,6 @@ public class WebSocketClient implements AutoCloseable {
         this.password = password;
         this.hostVerificationEnabled = hostVerificationEnabled;
         this.bufferSize = bufferSize;
-
-        Preconditions.checkNotNull(hostname, "%s must be supplied", "host name");
-        Preconditions.checkNotNull(httpsPort, "%s must be supplied", "HTTPS port");
-        Preconditions.checkNotNull(wssPort, "%s must be supplied", "WSS port");
-
-        if (doLogin && ((StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)
-                || (!StringUtils.isEmpty(username) && StringUtils.isEmpty(password))))) {
-            throw new IllegalArgumentException("Both username and password must be empty or non-empty");
-        }
-
     }
 
     public WebSocketClient(String hostname, int httpsPort, int wssPort, boolean doLogin, String username,
@@ -85,6 +75,15 @@ public class WebSocketClient implements AutoCloseable {
     }
 
     public void open(ClientHandler clientEndpoint) throws IOException, DeploymentException, URISyntaxException {
+
+        Preconditions.checkNotNull(hostname, "%s must be supplied", "host name");
+        Preconditions.checkNotNull(httpsPort, "%s must be supplied", "HTTPS port");
+        Preconditions.checkNotNull(wssPort, "%s must be supplied", "WSS port");
+
+        if (doLogin && ((StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)
+                || (!StringUtils.isEmpty(username) && StringUtils.isEmpty(password))))) {
+            throw new IllegalArgumentException("Both username and password must be empty or non-empty");
+        }
 
         Cookie sessionCookie = null;
         if (doLogin) {

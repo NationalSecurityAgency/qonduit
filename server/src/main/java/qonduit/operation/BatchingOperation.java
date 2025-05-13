@@ -20,7 +20,7 @@ public abstract class BatchingOperation<T> implements Operation {
     protected WebSocketRequest request = null;
     protected volatile boolean closed = false;
     protected ConcurrentSkipListSet<ByteBuf> batch = new ConcurrentSkipListSet<>();
-    private int batchSize = 100;
+    private volatile int batchSize = 100;
 
     @Override
     public void init(ChannelHandlerContext context, AccumuloClient client, Authorizations auths, WebSocketRequest r) {
