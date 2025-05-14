@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import javax.net.ssl.SSLContext;
 
 import org.apache.accumulo.core.client.AccumuloClient;
+import org.apache.accumulo.core.client.NamespaceExistsException;
 import org.apache.accumulo.core.client.admin.NewTableConfiguration;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.apache.accumulo.core.metadata.MetadataTable;
@@ -30,6 +31,7 @@ import io.netty.handler.ssl.SslProvider;
 import qonduit.Server;
 import qonduit.auth.AuthCache;
 import qonduit.client.websocket.WebSocketClient;
+import qonduit.operations.splits.SplitLookupOperation;
 import qonduit.operations.splits.SplitLookupRequest;
 import qonduit.operations.splits.SplitLookupResponse;
 import qonduit.serialize.JsonSerializer;
@@ -73,7 +75,7 @@ public class SplitStoreIT extends OneWaySSLBase {
     }
 
     private Pair<String, String> doSplitLookup(WebSocketClient client, String tableName, String row,
-            boolean errorExpected, String errMsgPrefix) throws Exception {
+            boolean errorExpected, String errMsg) throws Exception {
         List<byte[]> responses = new ArrayList<>();
         String id = UUID.randomUUID().toString();
         SplitLookupRequest request = new SplitLookupRequest();
@@ -88,7 +90,8 @@ public class SplitStoreIT extends OneWaySSLBase {
         Assert.assertEquals(response.getErrorMessage(), response.isError(), errorExpected);
         Assert.assertTrue(response.isEndOfResults());
         if (errorExpected) {
-            Assert.assertTrue(response.getErrorMessage().startsWith(errMsgPrefix));
+            Assert.assertTrue("Expected: " + errMsg + ", recieved: " + response.getErrorMessage(),
+                    response.getErrorMessage().equals(errMsg));
             return null;
         } else {
             return new Pair<>(response.getBeginRow(), response.getEndRow());
@@ -99,26 +102,31 @@ public class SplitStoreIT extends OneWaySSLBase {
     public void testSplitStore() throws Exception {
         WebSocketClient client = new WebSocketClient(sslCtx, "localhost", 54322, 54323, false, null, null, false,
                 65536);
-        Assert.assertNull(
-                doSplitLookup(client, RootTable.NAME, "a", true, "SplitStore does not keep splits for table: "));
-        Assert.assertNull(
-                doSplitLookup(client, MetadataTable.NAME, "a", true, "SplitStore does not keep splits for table: "));
-        Assert.assertNull(doSplitLookup(client, "fakeTable", "a", true, "Table does not exist: "));
+        Assert.assertNull(doSplitLookup(client, RootTable.NAME, "a", true,
+                String.format(SplitLookupOperation.INVALID_TABLE_ERROR, RootTable.NAME)));
+        Assert.assertNull(doSplitLookup(client, MetadataTable.NAME, "a", true,
+                String.format(SplitLookupOperation.INVALID_TABLE_ERROR, MetadataTable.NAME)));
+        Assert.assertNull(doSplitLookup(client, "fakeTable", "a", true,
+                String.format(SplitLookupOperation.TABLE_NOT_FOUND_ERROR, "fakeTable")));
 
-        String tableName = "qonduit.splitTest";
+        final String tableName = "qonduit.splitTest";
 
-        SortedSet<Text> splits = new TreeSet<>();
+        final SortedSet<Text> splits = new TreeSet<>();
         // a-z
-        IntStream.rangeClosed(97, 122).forEach(i -> splits.add(new Text(i + "")));
+        IntStream.rangeClosed(97, 122).forEach(i -> splits.add(new Text(((char) i) + "")));
 
-        NewTableConfiguration ntc = new NewTableConfiguration();
+        final NewTableConfiguration ntc = new NewTableConfiguration();
         ntc.withSplits(splits);
 
         AccumuloClient accumulo = mac.createAccumuloClient(MAC_ROOT_USER, new PasswordToken(MAC_ROOT_PASSWORD));
-        accumulo.namespaceOperations().create("qonduit");
-        accumulo.tableOperations().create(tableName);
+        try {
+            accumulo.namespaceOperations().create("qonduit");
+        } catch (NamespaceExistsException e) {
+        }
+        accumulo.tableOperations().create(tableName, ntc);
 
-        Assert.assertNull(doSplitLookup(client, tableName, "a", true, "Splits file not created yet for table: "));
+        Assert.assertNull(doSplitLookup(client, tableName, "a", true,
+                String.format(SplitLookupOperation.NO_SPLITS_FILE_ERROR, tableName)));
 
         Thread.sleep(10000);
 
@@ -126,6 +134,20 @@ public class SplitStoreIT extends OneWaySSLBase {
         Assert.assertNotNull(results);
         Assert.assertEquals("null", results.getFirst());
         Assert.assertEquals("a", results.getSecond());
+
+        results = doSplitLookup(client, tableName, "a", false, null);
+        Assert.assertNotNull(results);
+        Assert.assertEquals("null", results.getFirst());
+        Assert.assertEquals("a", results.getSecond());
+
+        results = doSplitLookup(client, tableName, "a_", false, null);
+        Assert.assertNotNull(results);
+        Assert.assertEquals("a", results.getFirst());
+        Assert.assertEquals("b", results.getSecond());
+
+        accumulo.tableOperations().delete(tableName);
+        Assert.assertNull(doSplitLookup(client, tableName, "a", true,
+                String.format(SplitLookupOperation.TABLE_NOT_FOUND_ERROR, tableName)));
 
     }
 

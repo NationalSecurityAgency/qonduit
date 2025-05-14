@@ -17,6 +17,7 @@ import javax.websocket.Session;
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
+import org.apache.accumulo.core.client.NamespaceExistsException;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
@@ -47,6 +48,7 @@ import qonduit.client.websocket.WebSocketClient;
 import qonduit.operations.scanner.KVPair;
 import qonduit.operations.scanner.ScanRequest;
 import qonduit.operations.scanner.Value;
+import qonduit.operations.splits.SplitLookupOperation;
 import qonduit.operations.splits.SplitLookupRequest;
 import qonduit.operations.splits.SplitLookupResponse;
 import qonduit.operations.version.VersionRequest;
@@ -183,7 +185,10 @@ public class WebSocketClientIT extends OneWaySSLBase {
         long now = System.currentTimeMillis();
         String tableName = "qonduit.scanTest";
         AccumuloClient accumulo = mac.createAccumuloClient(MAC_ROOT_USER, new PasswordToken(MAC_ROOT_PASSWORD));
-        accumulo.namespaceOperations().create("qonduit");
+        try {
+            accumulo.namespaceOperations().create("qonduit");
+        } catch (NamespaceExistsException e) {
+        }
         accumulo.tableOperations().create(tableName);
         BatchWriterConfig bwc = new BatchWriterConfig();
         bwc.setMaxLatency(2, TimeUnit.SECONDS);
@@ -231,7 +236,7 @@ public class WebSocketClientIT extends OneWaySSLBase {
     }
 
     private Pair<String, String> doSplitLookup(WebSocketClient client, String tableName, String row,
-            boolean errorExpected, String errMsgPrefix) throws Exception {
+            boolean errorExpected, String errMsg) throws Exception {
         List<byte[]> responses = new ArrayList<>();
         String id = UUID.randomUUID().toString();
         SplitLookupRequest request = new SplitLookupRequest();
@@ -246,7 +251,7 @@ public class WebSocketClientIT extends OneWaySSLBase {
         Assert.assertEquals(response.isError(), errorExpected);
         Assert.assertTrue(response.isEndOfResults());
         if (errorExpected) {
-            Assert.assertTrue(response.getErrorMessage().startsWith(errMsgPrefix));
+            Assert.assertTrue(response.getErrorMessage().equals(errMsg));
             return null;
         } else {
             return new Pair<>(response.getBeginRow(), response.getEndRow());
@@ -258,7 +263,9 @@ public class WebSocketClientIT extends OneWaySSLBase {
 
         WebSocketClient client = new WebSocketClient(sslCtx, "localhost", 54322, 54323, false, null, null, false,
                 65536);
-        Assert.assertNull(doSplitLookup(client, RootTable.NAME, "a", true, "Split server is disabled."));
-        Assert.assertNull(doSplitLookup(client, MetadataTable.NAME, "a", true, "Split server is disabled."));
+        Assert.assertNull(
+                doSplitLookup(client, RootTable.NAME, "a", true, SplitLookupOperation.SPLIT_SERVER_DISABLED_ERROR));
+        Assert.assertNull(
+                doSplitLookup(client, MetadataTable.NAME, "a", true, SplitLookupOperation.SPLIT_SERVER_DISABLED_ERROR));
     }
 }

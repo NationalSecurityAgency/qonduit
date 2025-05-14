@@ -32,6 +32,13 @@ import qonduit.util.JsonUtil;
 
 public class SplitLookupOperation implements Operation {
 
+    public static final String SPLIT_SERVER_DISABLED_ERROR = "Split server is disabled";
+    public static final String INVALID_TABLE_ERROR = "SplitStore does not keep splits for table: %s";
+    public static final String TABLE_NOT_FOUND_ERROR = "Table does not exist: %s";
+    public static final String NO_SPLITS_FILE_ERROR = "Splits file not created yet for table: %s";
+    public static final String SPLIT_FILE_CREATION_ERROR = "Error creating splits file for table: %s";
+    public static final String TABLE_DELETED_ERROR = "Table deleted: %s";
+
     private static final Logger LOG = LoggerFactory.getLogger(SplitLookupOperation.class);
 
     private SplitLookupRequest request = null;
@@ -46,27 +53,27 @@ public class SplitLookupOperation implements Operation {
         response.setEndOfResults(true);
 
         if (server.getSplitStore() == null) {
-            response.setErrorMessage("Split server is disabled.");
+            response.setErrorMessage(SPLIT_SERVER_DISABLED_ERROR);
         } else {
 
             final String tableName = request.getTableName();
             final String tableId = server.getDataStore().getConnector().tableOperations().tableIdMap().get(tableName);
 
             if (tableName.startsWith(Namespace.ACCUMULO.name() + ".")) {
-                response.setErrorMessage("SplitStore does not keep splits for table: " + tableName);
+                response.setErrorMessage(String.format(INVALID_TABLE_ERROR, tableName));
             } else if (tableId == null) {
-                response.setErrorMessage("Table does not exist: " + tableName);
+                response.setErrorMessage(String.format(TABLE_NOT_FOUND_ERROR, tableName));
             } else {
                 final String lookup = request.getRow();
 
                 AtomicReference<Path> splitsFile = server.getSplitStore().getSplitsFileForTable(tableName);
 
                 if (splitsFile == null) {
-                    response.setErrorMessage("Splits file not created yet for table: " + tableName);
+                    response.setErrorMessage(String.format(NO_SPLITS_FILE_ERROR, tableName));
                 } else if (splitsFile == SplitStore.ERROR_REF) {
-                    response.setErrorMessage("Error creating splits file for table: " + tableName);
+                    response.setErrorMessage(String.format(SPLIT_FILE_CREATION_ERROR, tableName));
                 } else if (splitsFile == SplitStore.TABLE_DELETED_REF) {
-                    response.setErrorMessage("Table " + tableName + " deleted.");
+                    response.setErrorMessage(String.format(TABLE_DELETED_ERROR, tableName));
                 } else {
                     // do lookup
                     Text lookupRow = MetadataSchema.TabletsSection.encodeRow(TableId.of(tableId), new Text(lookup));
