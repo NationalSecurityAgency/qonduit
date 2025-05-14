@@ -1,21 +1,21 @@
 package qonduit;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import org.apache.accumulo.core.client.BatchWriterConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
 
-import qonduit.validator.NotEmptyIfFieldSet;
-
 import com.google.common.collect.Lists;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import qonduit.validator.NotEmptyIfFieldSet;
 
 @Component
 @ConfigurationProperties(prefix = "qonduit")
@@ -80,6 +80,9 @@ public class Configuration {
         @Valid
         @NestedConfigurationProperty
         private Scan scan = new Scan();
+        @Valid
+        @NestedConfigurationProperty
+        private SplitServer splitServer = new SplitServer();
 
         public String getInstanceName() {
             return instanceName;
@@ -100,6 +103,10 @@ public class Configuration {
 
         public Scan getScan() {
             return scan;
+        }
+
+        public SplitServer getSplitServer() {
+            return splitServer;
         }
 
         public Configuration setInstanceName(String instanceName) {
@@ -164,6 +171,39 @@ public class Configuration {
             this.bufferSize = bufferSize;
             return Configuration.this;
         }
+    }
+
+    public class SplitServer {
+
+        private boolean enabled = false;
+        private String localSplitStorageDirectory = System.getProperty("java.io.tmpdir") + File.separator
+                + "SplitStorage";
+        private int refreshIntervalSeconds = 86400;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getLocalSplitStorageDirectory() {
+            return localSplitStorageDirectory;
+        }
+
+        public void setLocalSplitStorageDirectory(String localSplitStorageDirectory) {
+            this.localSplitStorageDirectory = localSplitStorageDirectory;
+        }
+
+        public int getRefreshIntervalSeconds() {
+            return refreshIntervalSeconds;
+        }
+
+        public void setRefreshIntervalSeconds(int refreshIntervalSeconds) {
+            this.refreshIntervalSeconds = refreshIntervalSeconds;
+        }
+
     }
 
     public class Scan {

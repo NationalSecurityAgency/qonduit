@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -48,7 +47,7 @@ public class ConfigurationTest {
         assertTrue(config.getSecurity().getSsl().isUseGeneratedKeypair());
     }
 
-    @Test /* (expected = BeanCreationException.class) */
+    @Test
     public void testMissingSSLProperty() throws Exception {
         context.register(SpringBootstrap.class);
         // @formatter:off

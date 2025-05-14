@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import qonduit.Server;
 import qonduit.api.request.WebSocketRequest;
 import qonduit.util.JsonUtil;
 
@@ -23,9 +24,9 @@ public abstract class BatchingOperation<T> implements Operation {
     private volatile int batchSize = 100;
 
     @Override
-    public void init(ChannelHandlerContext context, AccumuloClient client, Authorizations auths, WebSocketRequest r) {
+    public void init(ChannelHandlerContext context, Server server, Authorizations auths, WebSocketRequest r) {
         this.context = context;
-        this.client = client;
+        this.client = server.getDataStore().getConnector();
         this.auths = auths;
         this.request = r;
     }
