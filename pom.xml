@@ -42,7 +42,7 @@
         <version.beanutils>1.10.1</version.beanutils>
         <version.caffeine>3.2.0</version.caffeine>
         <version.commons-collections4>4.5.0</version.commons-collections4>
-        <version.commons-lang3>3.17.0</version.commons-lang3>
+        <version.commons-lang3>3.18.0</version.commons-lang3>
         <version.disruptor>3.4.4</version.disruptor>
         <version.guava>33.4.6-jre</version.guava>
         <version.hadoop>3.3.6</version.hadoop>
