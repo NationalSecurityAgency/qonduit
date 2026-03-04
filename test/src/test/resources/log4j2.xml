@@ -6,12 +6,14 @@
     </Console>
   </Appenders>
   <Loggers>
+    <Logger name="org.apache.accumulo.core" level="WARN" additivity="false" />
     <Logger name="org.apache.accumulo.core.client.impl.ThriftTransportPool" level="OFF" additivity="false" />
     <Logger name="org.apache.accumulo.fate.zookeeper.ZooCache" level="OFF" additivity="false" />
+    <Logger name="org.apache.hadoop.io.compress.CodecPool" level="OFF" additivity="false" />
     <Logger name="org.apache.zookeeper" level="OFF" additivity="false" />
     <Logger name="javax.net.debug" level="ALL" additivity="false"/>
     <Logger name="sun.net.www.protocol.http.HttpURLConnection" level="ALL" additivity="false" />
-    <Root level="TRACE">
+    <Root level="DEBUG">
       <AppenderRef ref="CONSOLE"/>
     </Root>
   </Loggers>

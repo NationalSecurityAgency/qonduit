@@ -450,7 +450,7 @@
                 </property>
             </activation>
             <properties>
-                <maven.compiler.release>8</maven.compiler.release>
+                <maven.compiler.release>11</maven.compiler.release>
                 <!-- provide a default of no classifier when loading in Eclipse -->
                 <os.detected.classifier></os.detected.classifier>
             </properties>
@@ -492,7 +492,7 @@
                 <jdk>[9,)</jdk>
             </activation>
             <properties>
-                <maven.compiler.release>8</maven.compiler.release>
+                <maven.compiler.release>11</maven.compiler.release>
             </properties>
         </profile>
     </profiles>

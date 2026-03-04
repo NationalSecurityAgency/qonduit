@@ -19,16 +19,16 @@ public class TestServer extends Server {
     }
 
     @Override
-    protected ChannelHandler setupHttpChannel(Configuration config, SslContext sslCtx) {
+    protected ChannelHandler setupHttpChannel(SslContext sslCtx) {
         return new ChannelInitializer<SocketChannel>() {
 
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast("ssl", new NonSslRedirectHandler(config, sslCtx));
+                ch.pipeline().addLast("ssl", new NonSslRedirectHandler(getConfiguration(), sslCtx));
                 ch.pipeline().addLast("decompressor", new HttpContentDecompressor());
                 ch.pipeline().addLast("decoder", new HttpRequestDecoder());
                 ch.pipeline().addLast("aggregator", new HttpObjectAggregator(8192));
-                ch.pipeline().addLast("queryDecoder", new qonduit.netty.http.HttpRequestDecoder(config));
+                ch.pipeline().addLast("queryDecoder", new qonduit.netty.http.HttpRequestDecoder(getConfiguration()));
                 ch.pipeline().addLast("capture", httpRequests);
             }
         };

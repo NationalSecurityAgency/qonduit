@@ -3,7 +3,6 @@ package qonduit.operations.scanner;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.Scanner;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.hadoop.io.Text;
@@ -11,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.channel.ChannelHandlerContext;
+import qonduit.Server;
 import qonduit.api.request.WebSocketRequest;
 import qonduit.operation.BatchingOperation;
 
@@ -21,8 +21,8 @@ public class ScanOperation extends BatchingOperation<KVPair> {
     private ScanRequest request = null;
 
     @Override
-    public void init(ChannelHandlerContext context, AccumuloClient client, Authorizations auths, WebSocketRequest r) {
-        super.init(context, client, auths, r);
+    public void init(ChannelHandlerContext context, Server server, Authorizations auths, WebSocketRequest r) {
+        super.init(context, server, auths, r);
         if (r instanceof ScanRequest) {
             this.request = (ScanRequest) r;
             this.setBatchSize(this.request.getResultBatchSize());

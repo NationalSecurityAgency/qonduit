@@ -1,2 +1,3 @@
 qonduit.operations.version.VersionOperation
 qonduit.operations.scanner.ScanOperation
+qonduit.operations.splits.SplitLookupOperation
