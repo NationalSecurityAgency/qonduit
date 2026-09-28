@@ -291,10 +291,25 @@ public class Server {
                 httpPort, wsAddress, wsPort);
     }
 
+    static void validateSslConfiguration(Configuration.Ssl sslCfg) {
+
+        if (null == sslCfg.getCertificateFile() || null == sslCfg.getKeyFile()) {
+            throw new IllegalArgumentException("Check your SSL properties, something is wrong.");
+        }
+        String trustStore = sslCfg.getTrustStoreFile();
+        if (null == trustStore || trustStore.isEmpty()) {
+            // Without one, Netty uses the JVM default trust store, so any public CA
+            // can issue a client certificate that X509LoginRequestHandler accepts.
+            throw new IllegalArgumentException(
+                    "Set security.ssl.trust-store-file to the certificate authority that issues client certificates.");
+        }
+    }
+
     protected SslContext createSSLContext(Configuration config) throws Exception {
 
         Configuration.Ssl sslCfg = config.getSecurity().getSsl();
         Boolean generate = sslCfg.isUseGeneratedKeypair();
+        String trustStore = sslCfg.getTrustStoreFile();
         SslContextBuilder ssl;
         if (generate) {
             LOG.warn("Using generated self signed server certificate");
@@ -303,13 +318,9 @@ public class Server {
             SelfSignedCertificate ssc = new SelfSignedCertificate("localhost", begin, end);
             ssl = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey());
         } else {
-            String cert = sslCfg.getCertificateFile();
-            String key = sslCfg.getKeyFile();
-            String keyPass = sslCfg.getKeyPassword();
-            if (null == cert || null == key) {
-                throw new IllegalArgumentException("Check your SSL properties, something is wrong.");
-            }
-            ssl = SslContextBuilder.forServer(new File(cert), new File(key), keyPass);
+            validateSslConfiguration(sslCfg);
+            ssl = SslContextBuilder.forServer(new File(sslCfg.getCertificateFile()), new File(sslCfg.getKeyFile()),
+                    sslCfg.getKeyPassword());
         }
 
         ssl.ciphers(sslCfg.getUseCiphers());
@@ -323,11 +334,11 @@ public class Server {
         } else {
             ssl.sslProvider(SslProvider.JDK);
         }
-        String trustStore = sslCfg.getTrustStoreFile();
-        if (null != trustStore) {
-            if (!trustStore.isEmpty()) {
-                ssl.trustManager(new File(trustStore));
-            }
+        if (null != trustStore && !trustStore.isEmpty()) {
+            ssl.trustManager(new File(trustStore));
+        } else {
+            LOG.warn(
+                    "No trust store configured, client certificates will be checked against the JVM default trust store");
         }
         return ssl.build();
     }
