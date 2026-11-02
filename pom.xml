@@ -44,7 +44,7 @@
         <version.commons-collections4>4.5.0</version.commons-collections4>
         <version.commons-lang3>3.20.0</version.commons-lang3>
         <version.disruptor>4.0.0</version.disruptor>
-        <version.guava>33.5.0-jre</version.guava>
+        <version.guava>33.7.1-jre</version.guava>
         <version.hadoop>3.4.3</version.hadoop>
         <version.httpcomponents>4.5.14</version.httpcomponents>
         <version.jackson>2.19.1</version.jackson>
